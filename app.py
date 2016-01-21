@@ -6,6 +6,7 @@ import tornado.httpclient
 import tornado.escape
 import tornado.gen
 import logging
+import os
 
 logging.basicConfig(
 		level = logging.DEBUG,
@@ -71,6 +72,16 @@ class WebSpiderHandler_coroutine(tornado.web.RequestHandler):
 		json = tornado.escape.json_decode(response.body)
 		self.write("Fetched " + str(json) + "from fake API")
 
+
+class TemplateHandler(tornado.web.RequestHandler):
+	@tornado.gen.coroutine
+	def get(self):
+		http = tornado.httpclient.AsyncHTTPClient()
+		response = yield http.fetch("http://192.168.56.111:8888/api")
+		json = tornado.escape.json_decode(response.body)
+		#userlist = [ "Hello" , "hellO", "aaa" , "bbbb" ]
+		self.render("index.html", title = "Very first template demo", userlist = json )
+
 class Application(tornado.web.Application):
 	def __init__(self):
 		handlers = [
@@ -79,11 +90,14 @@ class Application(tornado.web.Application):
 			(r"/fetch_async", WebSpiderHandler_Async),
 			(r"/api", FakeJsonAPI),
 			(r"/fetch_coro", WebSpiderHandler_coroutine),
+			(r"/temp", TemplateHandler),
 		]
 		setttings = dict(
-			autoreload	= True,
-			debug		= True,
-			compress_response = True,
+			autoreload			= True,
+			debug				= True,
+			compress_response	= True,
+			template_path		= os.path.join(os.path.dirname(__file__), "templates"),
+			compiled_template_cache = False,
 		#	xsrf_cookies = True,
 		)
 		super(Application, self).__init__(handlers, **setttings)
