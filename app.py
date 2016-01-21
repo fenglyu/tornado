@@ -32,12 +32,12 @@ class Application(tornado.web.Application):
 			autoreload	= True,
 			debug		= True,
 			compress_response = True,
-			xsrf_cookies = True,
+#			xsrf_cookies = True,
 		)
-		super(Applicaton, self).__init__(handlers, **setttings)
+		super(Application, self).__init__(handlers, **setttings)
 
 def make_app():
-	return Application
+	return Application()
 
 if __name__ == "__main__":
 	app = make_app()
