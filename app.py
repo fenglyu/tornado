@@ -20,6 +20,7 @@ class MainHandler(tornado.web.RequestHandler):
 			'<br><a href="/msg">Message</a>'
 			'<br><a href="/fetch_async">API @tornado.web.asynchronous</a>'
 			'<br><a href="/fetch_coro">API @tornado.gen.coroutine</a>'
+			'<br><a href="/temp">Template</a>'
 			'</body></html>')
 
 class MyFormHandler(tornado.web.RequestHandler):
