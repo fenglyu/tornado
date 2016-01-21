@@ -13,7 +13,7 @@ class MainHandler(tornado.web.RequestHandler):
 class MyFormHandler(tornado.web.RequestHandler):
 	def get(self):
 		self.write('<html><body><form action="/msg" method="POST">'
-                   '<input type="text" name="message">'
+           '<input type="text" name="message">'
                    '<input type="submit" value="Submit">'
                    '</form></body></html>')
 
@@ -21,12 +21,23 @@ class MyFormHandler(tornado.web.RequestHandler):
 		self.set_header("Content-Type", "text/plain")
 		self.write("You wrote " + self.get_body_argument("message"))
 
-def make_app():
-	return tornado.web.Application([
+
+class Application(tornado.web.Application):
+	def __init__(self):
+		handlers = [
 			(r"/", MainHandler),
 			(r"/msg", MyFormHandler),
-			])
+		]
+		setttings = dict(
+			autoreload	= True,
+			debug		= True,
+			compress_response = True,
+			xsrf_cookies = True,
+		)
+		super(Applicaton, self).__init__(handlers, **setttings)
 
+def make_app():
+	return Application
 
 if __name__ == "__main__":
 	app = make_app()
