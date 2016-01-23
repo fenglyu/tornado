@@ -4,7 +4,6 @@ from tornado import gen
 from tornado.ioloop import IOLoop
 from tornado.queues import Queue
 
-
 q = Queue(maxsize=2)
 
 
@@ -32,5 +31,6 @@ def main():
     yield producer()
     yield q.join()
     print('Done')
+
 
 IOLoop.current().run_sync(main)

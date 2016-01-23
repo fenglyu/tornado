@@ -97,8 +97,8 @@ def main():
         worker()
     yield q.join(timeout=timedelta(seconds=300))
     assert fetching == fetched
-    print('Done in %d seconds, fetched %s URLs.' % (
-        time.time() - start, len(fetched)))
+    print('Done in %d seconds, fetched %s URLs.' % (time.time() - start,
+                                                    len(fetched)))
 
 
 if __name__ == '__main__':

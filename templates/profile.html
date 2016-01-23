@@ -1,1 +1,5 @@
-<>
+{% for profile in profiles %}
+	<tr>
+	{% module Profile(profile) %}
+	<tr>
+{% end %}

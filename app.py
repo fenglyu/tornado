@@ -10,18 +10,19 @@ import os
 
 logging.basicConfig(
     level=logging.DEBUG,
-    format='%(asctime)s %(levelname)s %(module)s.%(funcName)s Line:%(lineno)d %(message)s',
-)
+    format=
+    '%(asctime)s %(levelname)s %(module)s.%(funcName)s Line:%(lineno)d %(message)s', )
 
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.write('<html><body>'
-                   '<br><a href="/msg">Message</a>'
-                   '<br><a href="/fetch_async">API @tornado.web.asynchronous</a>'
-                   '<br><a href="/fetch_coro">API @tornado.gen.coroutine</a>'
-                   '<br><a href="/temp">Template</a>'
-                   '</body></html>')
+        self.write(
+            '<html><body>'
+            '<br><a href="/msg">Message</a>'
+            '<br><a href="/fetch_async">API @tornado.web.asynchronous</a>'
+            '<br><a href="/fetch_coro">API @tornado.gen.coroutine</a>'
+            '<br><a href="/temp">Template</a>'
+            '</body></html>')
 
 
 class MyFormHandler(tornado.web.RequestHandler):
@@ -39,17 +40,9 @@ class MyFormHandler(tornado.web.RequestHandler):
 class FakeJsonAPI(tornado.web.RequestHandler):
     @tornado.gen.coroutine
     def get(self):
-        feng = dict(
-            name="Feng LYU",
-            gender="male",
-            age=28,
-        )
+        feng = dict(name="Feng LYU", gender="male", age=28, )
 
-        sky = dict(
-            name="Sky Zhang",
-            gender="female",
-            age=26,
-        )
+        sky = dict(name="Sky Zhang", gender="female", age=26, )
         users = (feng, sky)
         json = tornado.escape.json_encode(users)
         self.write(json)
@@ -65,8 +58,7 @@ class WebSpiderHandler_Async(tornado.web.RequestHandler):
         if response.error:
             raise tornado.web.HTTPError(500)
         json = tornado.escape.json_decode(response.body)
-        self.write("Fetched " + str(json) + " name"
-                   "from our own api")
+        self.write("Fetched " + str(json) + " name" "from our own api")
         self.finish()
 
 
@@ -86,8 +78,13 @@ class TemplateHandler(tornado.web.RequestHandler):
         response = yield http.fetch("http://192.168.56.111:8888/api")
         json = tornado.escape.json_decode(response.body)
         #userlist = [ "Hello" , "hellO", "aaa" , "bbbb" ]
-        self.render("index.html", title="Very first template demo", userlist=json)
+        self.render("index.html",
+                    title="Very first template demo",
+                    userlist=json)
 
+
+class Profile():
+	pass
 
 class Application(tornado.web.Application):
     def __init__(self):
@@ -99,19 +96,19 @@ class Application(tornado.web.Application):
             (r"/fetch_coro", WebSpiderHandler_coroutine),
             (r"/temp", TemplateHandler),
         ]
-        setttings = dict(
-            autoreload=True,
-            debug=True,
-            compress_response=True,
-            template_path=os.path.join(os.path.dirname(__file__), "templates"),
-            compiled_template_cache=False,
-            xsrf_cookies = True,
-        )
+        setttings = dict(autoreload=True,
+                         debug=True,
+                         compress_response=True,
+                         template_path=os.path.join(
+                             os.path.dirname(__file__), "templates"),
+                         compiled_template_cache=False,
+                         xsrf_cookies=True, )
         super(Application, self).__init__(handlers, **setttings)
 
 
 def make_app():
     return Application()
+
 
 if __name__ == "__main__":
     app = make_app()
