@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# vim: set fileencoding=utf-8 :
 
 import tornado.ioloop
 import tornado.web
@@ -7,6 +8,8 @@ import tornado.escape
 import tornado.gen
 import logging
 import os
+
+import uimodules
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -22,6 +25,7 @@ class MainHandler(tornado.web.RequestHandler):
             '<br><a href="/fetch_async">API @tornado.web.asynchronous</a>'
             '<br><a href="/fetch_coro">API @tornado.gen.coroutine</a>'
             '<br><a href="/temp">Template</a>'
+            '<br><a href="/uimodule">uimodule</a>'
             '</body></html>')
 
 
@@ -83,9 +87,24 @@ class TemplateHandler(tornado.web.RequestHandler):
                     userlist=json)
 
 
-class Profile(tornado.web.UIModule):
-	def render(self, profile):
-		return self.render_string("profile.html", profile = profile)
+class UIModuleHandler(tornado.web.RequestHandler):
+    @tornado.gen.coroutine
+    def get(self):
+        http = tornado.httpclient.AsyncHTTPClient()
+        response = yield http.fetch("http://192.168.56.111:8888/api")
+        user1 = User(name="许其亮", age=24, gender="男")
+        user2 = User(name="杨秋霞", age=23, gender="女")
+        profiles = [user1, user2]
+        self.render("uimodule.html",
+                    title="Yet Another Template",
+                    profiles=profiles)
+
+
+class User(object):
+    def __init__(self, name, age, gender):
+        self.name = name
+        self.age = age
+        self.gender = gender
 
 
 class Application(tornado.web.Application):
@@ -97,6 +116,7 @@ class Application(tornado.web.Application):
             (r"/api", FakeJsonAPI),
             (r"/fetch_coro", WebSpiderHandler_coroutine),
             (r"/temp", TemplateHandler),
+            (r"/uimodule", UIModuleHandler),
         ]
         setttings = dict(autoreload=True,
                          debug=True,
@@ -104,7 +124,8 @@ class Application(tornado.web.Application):
                          template_path=os.path.join(
                              os.path.dirname(__file__), "templates"),
                          compiled_template_cache=False,
-                         xsrf_cookies=True, )
+                         xsrf_cookies=True,
+                         ui_modules=uimodules, )
         super(Application, self).__init__(handlers, **setttings)
 
 

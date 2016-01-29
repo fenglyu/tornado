@@ -1,0 +1,13 @@
+<html>
+   <head>
+      <title>{{ title }}</title>
+   </head>
+   <body>
+     <ul>
+		<table border = "2">
+			{% module Template("profile.html", profiles=profiles) %}
+		</table>
+	{% module xsrf_form_html() %}
+     </ul>
+   </body>
+ </html>
