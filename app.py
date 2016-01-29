@@ -83,8 +83,10 @@ class TemplateHandler(tornado.web.RequestHandler):
                     userlist=json)
 
 
-class Profile():
-	pass
+class Profile(tornado.web.UIModule):
+	def render(self, profile):
+		return self.render_string("profile.html", profile = profile)
+
 
 class Application(tornado.web.Application):
     def __init__(self):
