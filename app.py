@@ -93,7 +93,7 @@ class UIModuleHandler(tornado.web.RequestHandler):
         http = tornado.httpclient.AsyncHTTPClient()
         response = yield http.fetch("http://192.168.56.111:8888/api")
         user1 = User(name="许其亮", age=24, gender="男")
-        user2 = User(name="杨秋霞", age=23, gender="女")
+        user2 = User(name="杨雪", age=23, gender="女")
         profiles = [user1, user2]
         self.render("uimodule.html",
                     title="Yet Another Template",
@@ -107,6 +107,23 @@ class User(object):
         self.gender = gender
 
 
+class LoginHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render("login.html", welcome="Demo of tornado login", error = None)
+
+    @tornado.gen.coroutine
+    def post(self):
+        user = self.get_argument("user")
+        password = tornado.escape.utf8(self.get_argument("password"))
+        if user == "feng" and password == "111":
+            self.set_secure_cookie("feng", str("feng"))
+            self.redirect(self.get_argument("next"))
+        else:
+            self.render("login.html",
+                        welcome="Something is wrong",
+                        error="username or password wrong")
+
+
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
@@ -117,6 +134,7 @@ class Application(tornado.web.Application):
             (r"/fetch_coro", WebSpiderHandler_coroutine),
             (r"/temp", TemplateHandler),
             (r"/uimodule", UIModuleHandler),
+            (r"/login", LoginHandler),
         ]
         setttings = dict(autoreload=True,
                          debug=True,
@@ -124,6 +142,8 @@ class Application(tornado.web.Application):
                          template_path=os.path.join(
                              os.path.dirname(__file__), "templates"),
                          compiled_template_cache=False,
+                         cookie_secret="__suning_secret__",
+                         login_url="/login",
                          xsrf_cookies=True,
                          ui_modules=uimodules, )
         super(Application, self).__init__(handlers, **setttings)

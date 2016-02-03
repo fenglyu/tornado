@@ -1,0 +1,14 @@
+<head>
+<title>{{ welcome }}</title>
+</head>
+{% if error %}
+<span sytle="color: red"> Error: {{ error }} </span><p>
+{% end %}
+
+<form action="/login" method="POST">
+	user:<input name="user", type="text"><br>
+	password:<input name="password", type="password"><br>
+	{% module xsrf_form_html() %}	
+	<input type="submit">
+	<input type="hidden" name="next" value="/uimodule">
+</form>
