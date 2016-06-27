@@ -4,10 +4,12 @@
 import tornado.ioloop
 import tornado.web
 import tornado.httpclient
+import tornado.httpserver
 import tornado.escape
 import tornado.gen
 import logging
 import os
+import tornado.websocket
 
 import uimodules
 
@@ -109,7 +111,7 @@ class User(object):
 
 class LoginHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("login.html", welcome="Demo of tornado login", error = None)
+        self.render("login.html", welcome="Demo of tornado login", error=None)
 
     @tornado.gen.coroutine
     def post(self):
@@ -135,6 +137,7 @@ class Application(tornado.web.Application):
             (r"/temp", TemplateHandler),
             (r"/uimodule", UIModuleHandler),
             (r"/login", LoginHandler),
+			(r"/websocket", EchoWebSocket),
         ]
         setttings = dict(autoreload=True,
                          debug=True,
@@ -149,11 +152,23 @@ class Application(tornado.web.Application):
         super(Application, self).__init__(handlers, **setttings)
 
 
+class EchoWebSocket(tornado.websocket.WebSocketHandler):
+	def open(self):
+		print("Websocket opened")
+
+	def on_message(self, message):
+		self.write_messages(u"You said: " + message)
+
+	def on_close(self):
+		print("WebSocket closed")
+
 def make_app():
     return Application()
 
 
 if __name__ == "__main__":
     app = make_app()
-    app.listen(8888)
+    server = tornado.httpserver.HTTPServer(app)
+    server.bind(8888)
+#    server.start(0)
     tornado.ioloop.IOLoop.current().start()
