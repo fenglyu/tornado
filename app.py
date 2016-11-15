@@ -6,6 +6,7 @@ import tornado.web
 import tornado.httpclient
 import tornado.escape
 import tornado.gen
+import tornado.escape
 import logging
 import os
 
@@ -109,9 +110,12 @@ class User(object):
 
 class LoginHandler(tornado.web.RequestHandler):
     def get(self):
+        print escape.xhtml_escape(self.xsrf_token)
         self.render("login.html", welcome="Demo of tornado login", error = None)
 
+
     @tornado.gen.coroutine
+    @tornado.web.authenticated
     def post(self):
         user = self.get_argument("user")
         password = tornado.escape.utf8(self.get_argument("password"))
@@ -136,7 +140,7 @@ class Application(tornado.web.Application):
             (r"/uimodule", UIModuleHandler),
             (r"/login", LoginHandler),
         ]
-        setttings = dict(autoreload=True,
+        settings = dict(autoreload=True,
                          debug=True,
                          compress_response=True,
                          template_path=os.path.join(
@@ -146,7 +150,7 @@ class Application(tornado.web.Application):
                          login_url="/login",
                          xsrf_cookies=True,
                          ui_modules=uimodules, )
-        super(Application, self).__init__(handlers, **setttings)
+        super(Application, self).__init__(handlers, **settings)
 
 
 def make_app():
