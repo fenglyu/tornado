@@ -3,7 +3,6 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import json
 
 import tornado.httpserver
 import tornado.web
@@ -11,6 +10,8 @@ import tornado.httpclient
 from tornado.options import define, options
 
 define("port", default=8000, help="run on given port", type=int)
+
+REMOTE_URL="http://www.sina.com.cn/"
 
 class Base(tornado.web.RequestHandler):
     pass
@@ -22,7 +23,7 @@ class Index(Base):
     def get(self):
         client = tornado.httpclient.AsyncHTTPClient()
         response = yield tornado.gen.Task(client.fetch,
-                "http://opsdevpre.cnsuning.com/")
+                REMOTE_URL)
         body = response.body
         now = datetime.datetime.utcnow()
         self.write("""
