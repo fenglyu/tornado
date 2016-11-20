@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 # -*- coding: utf-8 -*-
 
 import datetime
@@ -98,7 +97,7 @@ class Application(tornado.web.Application):
         ]
 
         settings = {
-            'auto_reload' : True,
+            'debug': True,
             'template_path': 'templates',
             'static_path': 'statics'
         }
